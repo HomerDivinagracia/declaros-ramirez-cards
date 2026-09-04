@@ -1,0 +1,642 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rocky & Rachel – Print Invitation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .page-bg {
+      position: fixed; inset: 0;
+      background: url('background_pic/untitled (185 of 490).jpg') center / cover no-repeat;
+      filter: brightness(0.38) saturate(0.85);
+      z-index: 0;
+    }
+
+    /* ── LANDING ── */
+    .page-content {
+      position: relative; z-index: 1; text-align: center; padding: 2rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .page-ornament { font-size: 1.8rem; color: rgba(201,169,110,.6); letter-spacing: .4em; margin-bottom: 1rem; display: block; }
+    .page-title { font-family: 'Great Vibes', cursive; font-size: clamp(3.5rem, 10vw, 6rem); color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,.55); line-height: 1.1; }
+    .page-ampersand { color: #c9a96e; }
+    .page-divider { width: 60px; height: 1px; background: linear-gradient(to right, transparent, #c9a96e, transparent); margin: 1.2rem auto; }
+    .page-subtitle { font-size: .7rem; letter-spacing: .38em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 2.8rem; }
+    .add-btn {
+      display: inline-flex; align-items: center; gap: .7rem; padding: 1rem 2.8rem;
+      background: linear-gradient(135deg, #c9a96e 0%, #b8924f 100%); color: #fff; border: none;
+      font-family: 'Montserrat', sans-serif; font-size: .75rem; letter-spacing: .28em;
+      text-transform: uppercase; cursor: pointer; border-radius: 50px;
+      box-shadow: 0 6px 30px rgba(201,169,110,.5); transition: transform .22s;
+    }
+    .add-btn:hover { transform: translateY(-3px); }
+    .add-btn svg { width: 17px; height: 17px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+
+    /* ── NAME MODAL ── */
+    .modal-bd { display: none; position: fixed; inset: 0; background: rgba(10,18,26,.72); z-index: 500; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+    .modal-bd.open { display: flex; }
+    .name-modal { background: #fff; border-radius: 20px; padding: 2.5rem 2.5rem 2rem; max-width: 420px; width: 92%; text-align: center; box-shadow: 0 28px 90px rgba(0,0,0,.35); animation: fadeUp .28s ease; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px);} to { opacity:1; transform:none; } }
+    .nm-floral { font-size: 2rem; color: #8ab07a; margin-bottom: .4rem; display: block; }
+    .name-modal h2 { font-family: 'Great Vibes', cursive; font-size: 2.6rem; color: #4a7a96; line-height: 1.1; margin-bottom: .4rem; }
+    .nm-hint { font-size: .78rem; color: #5c7a90; letter-spacing: .04em; margin-bottom: 1.6rem; }
+    .nm-inputs-grid { display: flex; flex-direction: column; gap: 1.2rem; }
+    .nm-input-wrap label { display: block; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: #4a7a96; font-weight: 500; margin-bottom: .35rem; text-align: left; }
+    .nm-input-wrap input { width: 100%; border: none; border-bottom: 2px solid #b8d0dc; padding: .6rem 0; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: #2b3a4a; outline: none; background: transparent; transition: border-color .2s; }
+    .nm-input-wrap input:focus { border-color: #4a7a96; }
+    .nm-input-wrap input::placeholder { color: #a8c4d2; font-style: italic; }
+    .nm-actions { display: flex; gap: .9rem; margin-top: 1.8rem; justify-content: center; }
+    .btn-cancel { padding: .78rem 1.8rem; border: 1px solid #b8d0dc; background: none; color: #4a7a96; font-family: 'Montserrat', sans-serif; font-size: .72rem; letter-spacing: .15em; text-transform: uppercase; border-radius: 50px; cursor: pointer; transition: background .2s; }
+    .btn-cancel:hover { background: #ebf3f7; }
+    .btn-generate { padding: .78rem 2rem; background: linear-gradient(135deg, #7b9db4 0%, #4a7a96 100%); color: #fff; border: none; font-family: 'Montserrat', sans-serif; font-size: .72rem; letter-spacing: .15em; text-transform: uppercase; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 18px rgba(74,122,150,.4); transition: transform .2s; }
+    .btn-generate:hover { transform: translateY(-2px); }
+
+    /* ── PREVIEW MODAL ── */
+    .preview-bd { display: none; position: fixed; inset: 0; background: #525659; z-index: 600; align-items: flex-start; justify-content: center; padding: 1.5rem; overflow-y: auto; }
+    .preview-bd.open { display: flex; }
+    .preview-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1.2rem; padding-top: 1rem; padding-bottom: 2rem; }
+
+    /* ── A4 PAGE SIMULATION ── */
+    .a4-page {
+      background: #fff;
+      width: 210mm;
+      min-height: 297mm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 40px rgba(0,0,0,.55);
+    }
+    .preview-label { font-size: .6rem; letter-spacing: .35em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+    .preview-actions { display: flex; gap: .9rem; flex-wrap: wrap; justify-content: center; }
+    .btn-print { display: inline-flex; align-items: center; gap: .5rem; padding: .78rem 2rem; background: linear-gradient(135deg, #c9a96e 0%, #b8924f 100%); color: #fff; border: none; font-family: 'Montserrat', sans-serif; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 18px rgba(201,169,110,.45); transition: transform .2s; }
+    .btn-print:hover { transform: translateY(-2px); }
+    .btn-print svg { width: 15px; height: 15px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; }
+    .btn-edit { display: inline-flex; align-items: center; gap: .5rem; padding: .78rem 1.8rem; border: 1px solid rgba(255,255,255,.3); background: none; color: rgba(255,255,255,.8); font-family: 'Montserrat', sans-serif; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; border-radius: 50px; cursor: pointer; transition: background .2s, border-color .2s; }
+    .btn-edit:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.5); }
+    .btn-edit svg { width: 13px; height: 13px; stroke: rgba(255,255,255,.8); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── 4-CARD SHEET (2×2 grid) ── */
+    .cards-sheet {
+      display: grid;
+      position: relative;
+      grid-template-columns: repeat(2, 89mm);
+      grid-template-rows: repeat(2, 127mm);
+      column-gap: 10mm;
+      row-gap: 3mm;
+    }
+
+    .cut-v {
+      position: absolute;
+      left: 94mm;
+      top: -14mm;
+      bottom: -14mm;
+      width: 0;
+      border-left: 1px dashed rgba(140,140,140,0.65);
+      pointer-events: none;
+      z-index: 20;
+    }
+    .cut-v::before {
+      content: '✂';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) rotate(90deg);
+      font-size: 8pt;
+      color: rgba(140,140,140,0.7);
+      line-height: 1;
+    }
+
+    .cut-h {
+      position: absolute;
+      top: 128.5mm;
+      left: -14mm;
+      right: -14mm;
+      height: 0;
+      border-top: 1px dashed rgba(140,140,140,0.65);
+      pointer-events: none;
+      z-index: 20;
+    }
+    .cut-h::before {
+      content: '✂';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 8pt;
+      color: rgba(140,140,140,0.7);
+      line-height: 1;
+    }
+
+    /* ── INDIVIDUAL CARD — portrait 3.5 × 5 in ── */
+    .inv-card {
+      width: 89mm;
+      height: 127mm;
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.55);
+    }
+    .card-photo {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 15%;
+      z-index: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(6,10,16,.28) 0%,
+        rgba(6,10,16,.50) 35%,
+        rgba(6,10,16,.68) 72%,
+        rgba(6,10,16,.82) 100%);
+      z-index: 1;
+    }
+
+    /* botanical corners */
+    .bot-c { position: absolute; pointer-events: none; z-index: 2; width: 52px; }
+    .bot-c.tl { top: 0; left: 0; }
+    .bot-c.tr { top: 0; right: 0; transform: scaleX(-1); }
+    .bot-c.bl { bottom: 0; left: 0; transform: scaleY(-1); }
+    .bot-c.br { bottom: 0; right: 0; transform: scale(-1,-1); }
+
+    /* card inner content */
+    .card-content {
+      position: relative; z-index: 3;
+      height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 16mm 7mm 13mm;
+    }
+    .cc-tag { font-family: 'Montserrat', sans-serif; font-size: 5pt; letter-spacing: .32em; text-transform: uppercase; color: rgba(201,169,110,1); text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+    .cc-dear { font-family: 'Great Vibes', cursive; font-size: 13.5pt; color: #a8e8f0; line-height: 1.1; margin-top: 2.2mm; text-shadow: 0 2px 10px rgba(0,0,0,.6); max-width: 100%; }
+    .cc-divider { width: 28mm; height: 0.3mm; background: linear-gradient(to right, transparent, #c9a96e, transparent); flex-shrink: 0; margin: 2.2mm 0; }
+    .cc-names { font-family: 'Great Vibes', cursive; font-size: 22pt; color: #fff; line-height: 1.05; text-shadow: 0 3px 16px rgba(0,0,0,.55); }
+    .cc-amp { color: #c9a96e; }
+    .cc-date { font-family: 'Montserrat', sans-serif; font-size: 5pt; letter-spacing: .22em; text-transform: uppercase; color: rgba(201,169,110,1); margin-top: 2.2mm; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+    .cc-time { font-family: 'Cormorant Garamond', serif; font-size: 7pt; font-style: italic; color: rgba(255,255,255,.90); margin-top: .8mm; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+    .cc-dots { font-size: 5pt; color: rgba(201,169,110,.9); letter-spacing: .4em; margin: 1.8mm 0; }
+    .cc-venue { font-family: 'Cormorant Garamond', serif; font-size: 8pt; color: #ffffff; letter-spacing: .05em; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+    .cc-location { font-family: 'Cormorant Garamond', serif; font-size: 6.5pt; font-style: italic; color: rgba(255,255,255,.80); margin-top: .6mm; }
+    .cc-note { font-family: 'Cormorant Garamond', serif; font-size: 5.5pt; font-style: italic; color: rgba(255,255,255,.75); margin-top: 2.8mm; line-height: 1.6; }
+
+    /* ── TRIFOLD PROGRAM SHEET ── */
+    .program-page { align-items: center !important; justify-content: center !important; }
+
+    /* ── ENTOURAGE CARD (89×127mm, white, green corners) ── */
+    .ent-card {
+      width: 89mm; height: 127mm; position: relative; overflow: hidden;
+      border-radius: 2px; box-shadow: 0 8px 28px rgba(0,0,0,.18);
+      background: url('bg_printing/invitation_bg.png') center / cover no-repeat;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .ent-bc { position: absolute; pointer-events: none; z-index: 2; width: 58px; }
+    .ent-bc.tl { top: 0; left: 0; }
+    .ent-bc.tr { top: 0; right: 0; transform: scaleX(-1); }
+    .ent-bc.bl { bottom: 0; left: 0; transform: scaleY(-1); }
+    .ent-bc.br { bottom: 0; right: 0; transform: scale(-1,-1); }
+    .ent-inner { position: absolute; inset: 7mm; z-index: 3; display: flex; flex-direction: column; padding: 4mm 4mm 3mm; background: transparent; border-radius: 2px; overflow: hidden; }
+    .ent-title-block { text-align: center; }
+    .ent-orn { display: block; font-size: .36rem; color: #3a5a3e; letter-spacing: .22em; margin-bottom: .4mm; text-shadow: 0 0 5px rgba(255,255,255,.95); }
+    .ent-script { font-family: 'Great Vibes', cursive; font-size: 15pt; color: #1a2e1a; line-height: 1.0; text-shadow: 0 0 8px rgba(255,255,255,1), 0 0 14px rgba(255,255,255,.8); }
+    .ent-amp { color: #5a7a3e; }
+    .ent-sub { font-family: 'Montserrat', sans-serif; font-size: 3.5pt; letter-spacing: .28em; text-transform: uppercase; color: #3a5a3e; display: block; margin-top: .5mm; text-shadow: 0 0 5px rgba(255,255,255,.95); }
+    .ent-hline { width: 50%; height: .3mm; background: linear-gradient(to right, transparent, rgba(90,122,90,.7), transparent); margin: 1.5mm auto; }
+    .ent-sec { font-family: 'Montserrat', sans-serif; font-size: 3.8pt; letter-spacing: .18em; text-transform: uppercase; color: #2e4a2e; font-weight: 600; text-align: center; margin-top: 1.5mm; margin-bottom: .5mm; text-shadow: 0 0 5px rgba(255,255,255,.95); }
+    .ent-sec-line { width: 30%; height: .25mm; background: linear-gradient(to right, transparent, rgba(90,122,90,.6), transparent); margin: 0 auto .6mm; }
+    .ent-two-col { display: flex; flex-direction: row; gap: 2mm; }
+    .ent-col { flex: 1; }
+    .ent-col-lbl { font-family: 'Montserrat', sans-serif; font-size: 3.5pt; letter-spacing: .12em; text-transform: uppercase; color: #3a5a3e; display: block; text-align: center; margin-bottom: .5mm; text-shadow: 0 0 5px rgba(255,255,255,.95); }
+    .ent-n { font-family: 'Cormorant Garamond', serif; font-size: 6.5pt; color: #1a2a1a; line-height: 1.45; display: block; text-align: center; text-shadow: 0 0 6px rgba(255,255,255,1), 0 0 12px rgba(255,255,255,.8); }
+    .ent-n.honor { font-weight: 600; color: #0f1f0f; text-shadow: 0 0 8px rgba(255,255,255,1), 0 0 16px rgba(255,255,255,.8); }
+    .ent-role { font-family: 'Montserrat', sans-serif; font-size: 3.1pt; color: #3a5a3e; text-transform: uppercase; letter-spacing: .06em; display: block; text-align: center; margin-top: .6mm; text-shadow: 0 0 5px rgba(255,255,255,.95); }
+    .ent-sponsor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2mm; }
+    .ent-swatches { display: flex; justify-content: center; gap: 1.8mm; margin: 1mm 0 .5mm; }
+    .ent-swatch-wrap { display: flex; flex-direction: column; align-items: center; gap: .3mm; }
+    .ent-swatch { width: 5.5mm; height: 5.5mm; border-radius: 1.5px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ent-swatch-lbl { font-family: 'Montserrat', sans-serif; font-size: 2.1pt; color: #2b3b2b; text-align: center; text-shadow: 0 0 4px rgba(255,255,255,.95); }
+    .ent-attire-note { font-family: 'Montserrat', sans-serif; font-size: 2.8pt; color: #2b3b2b; text-align: center; letter-spacing: .04em; margin: .5mm 0; text-shadow: 0 0 4px rgba(255,255,255,.95); }
+    .ent-attire-warn { font-family: 'Montserrat', sans-serif; font-size: 2.8pt; color: #b03030; text-align: center; letter-spacing: .04em; margin-top: .5mm; text-shadow: 0 0 5px rgba(255,255,255,.95); }
+    .ent-reminder-list { list-style: none; width: 100%; }
+    .ent-reminder-item { display: flex; flex-direction: column; align-items: center; padding: 1.5mm 0; border-bottom: .3mm solid rgba(122,158,110,.2); }
+    .ent-reminder-item:last-child { border-bottom: none; }
+    .ent-reminder-label { font-family: 'Montserrat', sans-serif; font-size: 2.8pt; color: #7a9e6e; text-transform: uppercase; letter-spacing: .12em; }
+    .ent-reminder-text { font-family: 'Cormorant Garamond', serif; font-size: 6.5pt; color: #2b3a2b; line-height: 1.3; }
+    .ent-closing-script { font-family: 'Great Vibes', cursive; font-size: 18pt; color: #1e2e1e; line-height: 1.0; text-align: center; }
+    .ent-closing-sub { font-family: 'Cormorant Garamond', serif; font-size: 6pt; color: #4a6a4e; text-align: center; font-style: italic; line-height: 1.6; display: block; }
+    .ent-closing-line { font-family: 'Montserrat', sans-serif; font-size: 3pt; letter-spacing: .2em; text-transform: uppercase; color: #7a9e6e; text-align: center; display: block; margin-top: .5mm; }
+    .ent-gift-item { display: flex; align-items: flex-start; gap: 2mm; padding: 1.5mm 0; border-bottom: .3mm solid rgba(122,158,110,.2); }
+    .ent-gift-item:last-child { border-bottom: none; }
+    .ent-gift-dot { width: 5mm; height: 5mm; border-radius: 50%; background: linear-gradient(135deg, #7b9db4, #4a7a96); flex-shrink: 0; margin-top: .5mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ent-gift-title { font-family: 'Montserrat', sans-serif; font-size: 3.5pt; font-weight: 600; color: #2b3a4a; text-transform: uppercase; letter-spacing: .1em; }
+    .ent-gift-desc { font-family: 'Cormorant Garamond', serif; font-size: 5.5pt; color: #4a5a6a; line-height: 1.4; display: block; margin-top: .3mm; }
+
+    /* ── WHITE BOTANICAL ENTOURAGE ── */
+    .ent2-2up { width: 188mm; display: flex; flex-direction: column; }
+    .ent2-sheet { width: 188mm; height: 139mm; display: flex; flex-direction: column; background: #fff; position: relative; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,.18); }
+    .ent2-bc { position: absolute; pointer-events: none; z-index: 2; width: 80px; }
+    .ent2-bc.tl { top: 0; left: 0; }
+    .ent2-bc.tr { top: 0; right: 0; transform: scaleX(-1); }
+    .ent2-bc.bl { bottom: 0; left: 0; transform: scaleY(-1); }
+    .ent2-bc.br { bottom: 0; right: 0; transform: scale(-1,-1); }
+    .ent2-inner { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; padding: 3.5mm 9mm 3mm; }
+    .ent2-title { text-align: center; margin-bottom: 1mm; }
+    .ent2-orn { display: block; font-size: .40rem; color: rgba(100,148,100,.55); letter-spacing: .30em; margin-bottom: .4mm; }
+    .ent2-script { font-family: 'Great Vibes', cursive; font-size: 17pt; color: #1e2e1e; line-height: 1.0; }
+    .ent2-amp { color: #7a9e6e; }
+    .ent2-sub { font-family: 'Montserrat', sans-serif; font-size: 3.5pt; letter-spacing: .35em; text-transform: uppercase; color: #7a9e6e; display: block; margin-top: .4mm; }
+    .ent2-hline { width: 52%; height: .3mm; background: linear-gradient(to right, transparent, rgba(122,158,110,.6), transparent); margin: 1.5mm auto; }
+    .ent2-sec { font-family: 'Montserrat', sans-serif; font-size: 3.8pt; letter-spacing: .24em; text-transform: uppercase; color: #5a7a5e; font-weight: 600; text-align: center; margin-top: 1.5mm; margin-bottom: .5mm; }
+    .ent2-sec-line { width: 35%; height: .25mm; background: linear-gradient(to right, transparent, rgba(122,158,110,.45), transparent); margin: 0 auto .7mm; }
+    .ent2-two-col { display: flex; flex-direction: row; gap: 3mm; }
+    .ent2-col { flex: 1; }
+    .ent2-col-lbl { font-family: 'Montserrat', sans-serif; font-size: 3.4pt; letter-spacing: .18em; text-transform: uppercase; color: #7a9e6e; display: block; text-align: center; margin-bottom: .5mm; }
+    .ent2-n { font-family: 'Cormorant Garamond', serif; font-size: 5.8pt; color: #2b3a2b; line-height: 1.5; display: block; text-align: center; }
+    .ent2-n.honor { font-weight: 600; color: #1a2b1a; }
+    .ent2-role { font-family: 'Montserrat', sans-serif; font-size: 3.3pt; color: #7a9e6e; text-transform: uppercase; letter-spacing: .08em; }
+    .ent2-sponsor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 4mm; }
+    .ent2-cut-h { width: 100%; height: 6mm; display: flex; align-items: center; gap: 2mm; }
+    .ent2-cut-h::before, .ent2-cut-h::after { content: ''; flex: 1; border-top: .7mm dashed rgba(140,140,140,.4); }
+    .ent2-cut-h span { font-size: 7pt; color: rgba(140,140,140,.45); }
+
+    /* ── PRINT ── */
+    @media print {
+      @page { margin: 0; size: A4 portrait; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      .page-bg, .page-content, #nameModal,
+      .preview-label, .preview-actions { display: none !important; }
+
+      body { background: none !important; overflow: visible !important; display: block !important; min-height: unset !important; }
+
+      .preview-bd {
+        display: block !important;
+        position: static !important;
+        background: none !important;
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+      .preview-wrap { display: block !important; padding: 0 !important; gap: 0 !important; }
+      .a4-page {
+        display: flex !important;
+        box-shadow: none !important;
+        width: 210mm !important;
+        min-height: 297mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .a4-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+      .program-page { align-items: center !important; justify-content: center !important; }
+      .cards-sheet { column-gap: 10mm !important; row-gap: 3mm !important; }
+      .cut-v { border-color: rgba(160,160,160,0.55) !important; }
+      .cut-h { border-color: rgba(160,160,160,0.55) !important; }
+      .ent-card { border-radius: 0 !important; box-shadow: none !important; width: 89mm !important; height: 127mm !important; }
+      .ent2-2up { width: 188mm !important; }
+      .ent2-sheet { height: 139mm !important; overflow: hidden !important; box-shadow: none !important; }
+      .ent2-cut-h { height: 6mm !important; }
+      .inv-card {
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        width: 89mm !important;
+        height: 127mm !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-bg"></div>
+
+<!-- ── LANDING ── -->
+<div class="page-content">
+  <span class="page-ornament">❧ ✦ ❧</span>
+  <div class="page-title">Rocky <span class="page-ampersand">&amp;</span> Rachel</div>
+  <div class="page-divider"></div>
+  <p class="page-subtitle">Wedding Invitation &nbsp;·&nbsp; December 8, 2026</p>
+  <button class="add-btn" onclick="openNameModal()">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    Add Invitation
+  </button>
+</div>
+
+<!-- ── NAME MODAL — 2 inputs ── -->
+<div class="modal-bd" id="nameModal">
+  <div class="name-modal">
+    <span class="nm-floral">🌿</span>
+    <h2>Add Guests</h2>
+    <p class="nm-hint">Enter guest name · leave blank to show "Dear Guest,"</p>
+    <div class="nm-inputs-grid">
+      <div class="nm-input-wrap">
+        <label for="guest1">Guest Name</label>
+        <input type="text" id="guest1" placeholder="e.g. Maria Santos" maxlength="40" autocomplete="off">
+      </div>
+    </div>
+    <div class="nm-actions">
+      <button class="btn-cancel" onclick="closeNameModal()">Cancel</button>
+      <button class="btn-generate" onclick="generateInvitation()">Generate Invitations</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PREVIEW MODAL ── -->
+<div class="preview-bd" id="previewModal">
+  <div class="preview-wrap">
+    <div class="preview-actions">
+      <button class="btn-edit" onclick="editNames()">
+        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Names
+      </button>
+      <button class="btn-print" onclick="window.print()">
+        <svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+        Print Invitations
+      </button>
+      <button class="btn-edit" onclick="addAnother()">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Add Another
+      </button>
+    </div>
+
+    <!-- ═══ PAGE 1: 4-CARD GRID (2×2) ═══ -->
+    <div class="a4-page">
+    <div class="cards-sheet">
+
+      <!-- cut guides -->
+      <div class="cut-v"></div>
+      <div class="cut-h"></div>
+
+      <!-- ═══ CARD 1: INVITATION ═══ -->
+      <div class="inv-card">
+        <img class="card-photo" src="bg_printing/viber_image_2026-06-25_10-26-32-988.jpg" alt="Rocky &amp; Rachel">
+        <div class="card-overlay"></div>
+        <svg class="bot-c tl" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg"><g opacity=".7"><path d="M6,154 Q36,112 70,68 Q94,36 128,8" fill="none" stroke="#c9a96e" stroke-width="1.4"/><path d="M22,128 Q8,105 6,80" fill="none" stroke="#c9a96e" stroke-width="1"/><ellipse cx="15" cy="142" rx="14" ry="5.5" fill="#c9a96e" opacity=".50" transform="rotate(-52 15 142)"/><ellipse cx="28" cy="122" rx="15" ry="6" fill="#b8924f" opacity=".44" transform="rotate(-48 28 122)"/><ellipse cx="44" cy="102" rx="13" ry="5.5" fill="#c9a96e" opacity=".38" transform="rotate(-42 44 102)"/><ellipse cx="59" cy="82" rx="12" ry="5" fill="#b8924f" opacity=".33" transform="rotate(-36 59 82)"/><ellipse cx="74" cy="62" rx="11" ry="4.5" fill="#c9a96e" opacity=".28" transform="rotate(-28 74 62)"/><circle cx="130" cy="7" r="3.5" fill="#c9a96e" opacity=".65"/><circle cx="130" cy="7" r="1.7" fill="#fff" opacity=".5"/></g></svg>
+        <svg class="bot-c tr" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg"><g opacity=".7"><path d="M6,154 Q36,112 70,68 Q94,36 128,8" fill="none" stroke="#c9a96e" stroke-width="1.4"/><path d="M22,128 Q8,105 6,80" fill="none" stroke="#c9a96e" stroke-width="1"/><ellipse cx="15" cy="142" rx="14" ry="5.5" fill="#c9a96e" opacity=".50" transform="rotate(-52 15 142)"/><ellipse cx="28" cy="122" rx="15" ry="6" fill="#b8924f" opacity=".44" transform="rotate(-48 28 122)"/><ellipse cx="44" cy="102" rx="13" ry="5.5" fill="#c9a96e" opacity=".38" transform="rotate(-42 44 102)"/><ellipse cx="59" cy="82" rx="12" ry="5" fill="#b8924f" opacity=".33" transform="rotate(-36 59 82)"/><ellipse cx="74" cy="62" rx="11" ry="4.5" fill="#c9a96e" opacity=".28" transform="rotate(-28 74 62)"/><circle cx="130" cy="7" r="3.5" fill="#c9a96e" opacity=".65"/><circle cx="130" cy="7" r="1.7" fill="#fff" opacity=".5"/></g></svg>
+        <svg class="bot-c bl" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg"><g opacity=".7"><path d="M6,154 Q36,112 70,68 Q94,36 128,8" fill="none" stroke="#c9a96e" stroke-width="1.4"/><path d="M22,128 Q8,105 6,80" fill="none" stroke="#c9a96e" stroke-width="1"/><ellipse cx="15" cy="142" rx="14" ry="5.5" fill="#c9a96e" opacity=".50" transform="rotate(-52 15 142)"/><ellipse cx="28" cy="122" rx="15" ry="6" fill="#b8924f" opacity=".44" transform="rotate(-48 28 122)"/><ellipse cx="44" cy="102" rx="13" ry="5.5" fill="#c9a96e" opacity=".38" transform="rotate(-42 44 102)"/><circle cx="130" cy="7" r="3.5" fill="#c9a96e" opacity=".65"/></g></svg>
+        <svg class="bot-c br" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg"><g opacity=".7"><path d="M6,154 Q36,112 70,68 Q94,36 128,8" fill="none" stroke="#c9a96e" stroke-width="1.4"/><path d="M22,128 Q8,105 6,80" fill="none" stroke="#c9a96e" stroke-width="1"/><ellipse cx="15" cy="142" rx="14" ry="5.5" fill="#c9a96e" opacity=".50" transform="rotate(-52 15 142)"/><ellipse cx="28" cy="122" rx="15" ry="6" fill="#b8924f" opacity=".44" transform="rotate(-48 28 122)"/><ellipse cx="44" cy="102" rx="13" ry="5.5" fill="#c9a96e" opacity=".38" transform="rotate(-42 44 102)"/><circle cx="130" cy="7" r="3.5" fill="#c9a96e" opacity=".65"/></g></svg>
+        <div class="card-content">
+          <p class="cc-tag">You Are Cordially Invited</p>
+          <p class="cc-dear" id="dearLine1">Dear Guest,</p>
+          <div class="cc-divider"></div>
+          <p class="cc-names">Rocky <span class="cc-amp">&amp;</span> Rachel</p>
+          <div class="cc-divider"></div>
+          <p class="cc-date">December 8, 2026</p>
+          <p class="cc-time">Tuesday · 3:00 in the afternoon</p>
+          <p class="cc-dots">· · ·</p>
+          <p class="cc-venue">Glendenning Hotel &amp; Resort</p>
+          <p class="cc-location">San Jose, Occidental Mindoro</p>
+          <p class="cc-note">Reception &amp; dinner to follow<br>immediately after the ceremony.</p>
+        </div>
+      </div>
+
+      <!-- ═══ CARD 2: PRINCIPAL SPONSORS ═══ -->
+      <div class="ent-card">
+        <svg class="ent-bc tl" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><ellipse cx="6" cy="30" rx="9" ry="3.4" fill="#8ab47a" opacity=".38" transform="rotate(-70 6 30)"/><ellipse cx="11" cy="47" rx="9" ry="3.4" fill="#7a9e6e" opacity=".32" transform="rotate(-78 11 47)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/><circle cx="66" cy="78" r="1.7" fill="#8ab47a" opacity=".28"/><circle cx="78" cy="76" r="1.4" fill="#6a8e5e" opacity=".24"/></svg>
+        <svg class="ent-bc tr" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><ellipse cx="6" cy="30" rx="9" ry="3.4" fill="#8ab47a" opacity=".38" transform="rotate(-70 6 30)"/><ellipse cx="11" cy="47" rx="9" ry="3.4" fill="#7a9e6e" opacity=".32" transform="rotate(-78 11 47)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/><circle cx="66" cy="78" r="1.7" fill="#8ab47a" opacity=".28"/><circle cx="78" cy="76" r="1.4" fill="#6a8e5e" opacity=".24"/></svg>
+        <svg class="ent-bc bl" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <svg class="ent-bc br" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <div class="ent-inner">
+          <div class="ent-title-block">
+            <span class="ent-orn">❧ ✦ ❧</span>
+            <div class="ent-script">Rocky <span class="ent-amp">&amp;</span> Rachel</div>
+            <span class="ent-sub">Nuptials · December 8, 2026</span>
+          </div>
+          <div class="ent-hline"></div>
+          <div class="ent-two-col">
+            <div class="ent-col">
+              <span class="ent-col-lbl">Parents of the Groom</span>
+              <span class="ent-n">Rolly Declaros</span>
+              <span class="ent-n">Annaliza Declaros</span>
+            </div>
+            <div class="ent-col">
+              <span class="ent-col-lbl">Parents of the Bride</span>
+              <span class="ent-n">Myrna Ramirez</span>
+            </div>
+          </div>
+          <div class="ent-sec">Officiating Minister</div>
+          <div class="ent-sec-line"></div>
+          <span class="ent-n" style="text-align:center">Pastor Vince Saulong</span>
+          <div class="ent-sec">Principal Sponsors</div>
+          <div class="ent-sec-line"></div>
+          <div class="ent-sponsor-grid">
+            <span class="ent-n">Emelinda &amp; Jimmy Sasota</span>
+            <span class="ent-n">Adoracion &amp; Rodolfo Laron</span>
+            <span class="ent-n">Ritchel &amp; Rodelfo Jr. Rosales</span>
+            <span class="ent-n">Ayra Silorio &amp; Richard Navales</span>
+            <span class="ent-n">Nida &amp; Boyong Morales</span>
+            <span class="ent-n">Aimee &amp; Melvin Rivera</span>
+            <span class="ent-n">Marilou &amp; Willy Francisco</span>
+            <span class="ent-n">Ana Dela Cruz &amp; Ramon Ramirez</span>
+            <span class="ent-n">Rosemarie &amp; Eduardo Talamillo</span>
+            <span class="ent-n">Elsa &amp; Ricky Biturin</span>
+            <span class="ent-n">Lorna &amp; Randy Sugbo</span>
+            <span class="ent-n"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CARD 3: BRIDAL PARTY + LITTLE ONES ═══ -->
+      <div class="ent-card">
+        <svg class="ent-bc tl" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <svg class="ent-bc tr" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <svg class="ent-bc bl" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <svg class="ent-bc br" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <div class="ent-inner" style="">
+          <div class="ent-title-block">
+            <span class="ent-orn">❧ ✦ ❧</span>
+            <div class="ent-script" style="font-size:13pt">Rocky <span class="ent-amp">&amp;</span> Rachel</div>
+            <span class="ent-sub">Bridal Party &amp; Little Ones</span>
+          </div>
+          <div class="ent-hline"></div>
+          <div class="ent-two-col" style="margin-bottom:1mm">
+            <div class="ent-col">
+              <span class="ent-col-lbl">Best Man</span>
+              <span class="ent-n honor" style="font-size:7pt">Dave Marbaja</span>
+            </div>
+            <div class="ent-col">
+              <span class="ent-col-lbl">Maid of Honor</span>
+              <span class="ent-n honor" style="font-size:7pt">Mariella Amistoso</span>
+            </div>
+          </div>
+          <div class="ent-sec" style="font-size:3.8pt;margin-top:0">Groomsmen &amp; Bridesmaids</div>
+          <div class="ent-sec-line"></div>
+          <div class="ent-two-col" style="margin-bottom:1mm">
+            <div class="ent-col">
+              <span class="ent-n" style="font-size:6.5pt">Kayron Formales</span>
+              <span class="ent-n" style="font-size:6.5pt">Paul Dabalmat</span>
+              <span class="ent-n" style="font-size:6.5pt">Russel Biturin</span>
+              <span class="ent-n" style="font-size:6.5pt">Echo Rosales</span>
+              <span class="ent-n" style="font-size:6.5pt">Rain Declaros</span>
+              <span class="ent-n" style="font-size:6.5pt">Raquim Declaros</span>
+              <span class="ent-n" style="font-size:6.5pt">Kenneth Ortilano</span>
+              <span class="ent-n" style="font-size:6.5pt">Michael Ramirez</span>
+            </div>
+            <div class="ent-col">
+              <span class="ent-n" style="font-size:6.5pt">Chris Ramirez</span>
+              <span class="ent-n" style="font-size:6.5pt">Melissa Ramirez</span>
+              <span class="ent-n" style="font-size:6.5pt">Roda Joy Declaros</span>
+              <span class="ent-n" style="font-size:6.5pt">Ludelyn Sugbo</span>
+              <span class="ent-n" style="font-size:6.5pt">Mhai Barlao</span>
+              <span class="ent-n" style="font-size:6.5pt">Renalyn Hindap</span>
+              <span class="ent-n" style="font-size:6.5pt">Kim Lagria</span>
+              <span class="ent-n" style="font-size:6.5pt">Erika Mausig</span>
+            </div>
+          </div>
+          <div class="ent-sec" style="font-size:3.8pt;margin-top:0">Little Ones</div>
+          <div class="ent-sec-line"></div>
+          <div class="ent-two-col">
+            <div class="ent-col">
+              <span class="ent-col-lbl">Girls</span>
+              <span class="ent-role" style="font-size:3pt">Little Bride</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Christine Sanidad</span>
+              <span class="ent-role" style="font-size:3pt">Here Comes the Bride</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Rhianna Declaros</span>
+              <span class="ent-role" style="font-size:3pt">Flower Girls</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Chloe Regala</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Kianna Sugbo</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Erin Ignacio</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Brielle Ayah Malunes</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Hailey Faith Santuyo</span>
+            </div>
+            <div class="ent-col">
+              <span class="ent-col-lbl">Boys</span>
+              <span class="ent-role" style="font-size:3pt">Bible Bearer</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Red Sanidad</span>
+              <span class="ent-role" style="font-size:3pt">Little Groom</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Mico Demos</span>
+              <span class="ent-role" style="font-size:3pt">Here Comes the Groom</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Austin Esguerra</span>
+              <span class="ent-role" style="font-size:3pt">Ring Bearer</span>
+              <span class="ent-n" style="font-size:6pt;line-height:1.3">Clint Gamol</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CARD 4: ATTIRE · GIFT · REMINDER ═══ -->
+      <div class="ent-card">
+        <svg class="ent-bc tl" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <svg class="ent-bc tr" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <svg class="ent-bc bl" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <svg class="ent-bc br" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"><path d="M4,4 Q22,20 44,42 Q60,58 74,76" fill="none" stroke="#7a9e6e" stroke-width="1" opacity=".55"/><path d="M4,4 Q11,30 15,55" fill="none" stroke="#7a9e6e" stroke-width=".8" opacity=".42"/><ellipse cx="20" cy="17" rx="13" ry="4.8" fill="#8ab47a" opacity=".48" transform="rotate(-44 20 17)"/><ellipse cx="34" cy="30" rx="15" ry="5.2" fill="#7a9e6e" opacity=".44" transform="rotate(-34 34 30)"/><ellipse cx="50" cy="46" rx="14" ry="5" fill="#6a8e5e" opacity=".40" transform="rotate(-23 50 46)"/><ellipse cx="64" cy="61" rx="13" ry="4.8" fill="#7a9e6e" opacity=".34" transform="rotate(-15 64 61)"/><circle cx="72" cy="72" r="2.2" fill="#7a9e6e" opacity=".34"/></svg>
+        <div class="ent-inner" style="justify-content:space-between">
+          <div>
+            <div class="ent-title-block">
+              <span class="ent-orn">❧ ✦ ❧</span>
+              <div class="ent-script" style="font-size:13pt">Rocky <span class="ent-amp">&amp;</span> Rachel</div>
+              <span class="ent-sub">Details</span>
+            </div>
+            <div class="ent-hline"></div>
+          </div>
+          <div>
+            <div class="ent-sec" style="font-size:3.8pt;margin-top:0">Attire Guide</div>
+            <div class="ent-sec-line"></div>
+            <div class="ent-two-col" style="gap:1.5mm">
+              <div class="ent-col">
+                <span class="ent-col-lbl">Gentlemen</span>
+                <div class="ent-swatches" style="gap:1.2mm;margin:0.8mm 0 0.4mm">
+                  <span class="ent-swatch" style="background:#f2ebe2;border:0.3mm solid #ccc;width:4.5mm;height:4.5mm"></span>
+                  <span class="ent-swatch" style="background:#1a2530;width:4.5mm;height:4.5mm"></span>
+                  <span class="ent-swatch" style="background:#7B9DB4;width:4.5mm;height:4.5mm"></span>
+                  <span class="ent-swatch" style="background:#b8d0dc;width:4.5mm;height:4.5mm"></span>
+                  <span class="ent-swatch" style="background:#e8d5b7;width:4.5mm;height:4.5mm"></span>
+                </div>
+                <span class="ent-n" style="font-size:5.5pt;line-height:1.4"><strong>Ninong</strong> — Barong &amp; Black Pants</span>
+                <span class="ent-n" style="font-size:5.5pt;line-height:1.4">Guests — Dusty · Powder · Beige</span>
+              </div>
+              <div class="ent-col">
+                <span class="ent-col-lbl">Ladies</span>
+                <div class="ent-swatches" style="gap:1.2mm;margin:0.8mm 0 0.4mm">
+                  <span class="ent-swatch" style="background:#7B9DB4;width:4.5mm;height:4.5mm"></span>
+                  <span class="ent-swatch" style="background:#b8d0dc;width:4.5mm;height:4.5mm"></span>
+                  <span class="ent-swatch" style="background:#e8d5b7;width:4.5mm;height:4.5mm"></span>
+                  <span class="ent-swatch" style="background:#c9a96e;width:4.5mm;height:4.5mm"></span>
+                </div>
+                <span class="ent-n" style="font-size:5.5pt;line-height:1.4"><strong>Ninang</strong> — Beige/Gold · Formal</span>
+                <span class="ent-n" style="font-size:5.5pt;line-height:1.4">Guests — Dusty · Powder · Beige</span>
+                <span class="ent-n" style="font-size:5.5pt;color:#c0504d;line-height:1.4">✕ No white dress please</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="ent-sec" style="font-size:3.8pt;margin-top:0">Gift Guide</div>
+            <div class="ent-sec-line"></div>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:6.5pt;font-style:italic;color:#4a5a6a;text-align:center;line-height:1.45;-webkit-print-color-adjust:exact">Your presence is the greatest gift. If you wish to give — monetary gift, home items, or simply your love is deeply appreciated.</p>
+          </div>
+          <div>
+            <div class="ent-sec" style="font-size:3.8pt;margin-top:0">Reminder</div>
+            <div class="ent-sec-line"></div>
+            <div style="display:flex;flex-direction:column;gap:0.7mm">
+              <span class="ent-n" style="font-size:6.5pt">✦ &nbsp;Be on time — 3:00 PM ceremony</span>
+              <span class="ent-n" style="font-size:6.5pt">✦ &nbsp;Enjoy the food prepared with love</span>
+              <span class="ent-n" style="font-size:6.5pt">✦ &nbsp;Be blessed &amp; have fun!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .cards-sheet -->
+    </div><!-- .a4-page -->
+
+  </div>
+</div>
+
+<script>
+  function openNameModal() {
+    document.getElementById('nameModal').classList.add('open');
+    setTimeout(function() { document.getElementById('guest1').focus(); }, 120);
+  }
+  function closeNameModal() {
+    document.getElementById('nameModal').classList.remove('open');
+    document.getElementById('guest1').value = '';
+  }
+  function generateInvitation() {
+    var name = document.getElementById('guest1').value.trim();
+    if (!name) {
+      document.getElementById('guest1').focus();
+      return;
+    }
+    var dear = 'Dear ' + name + ',';
+    document.getElementById('dearLine1').textContent = dear;
+    closeNameModal();
+    document.getElementById('previewModal').classList.add('open');
+  }
+  function closePreview() {
+    document.getElementById('previewModal').classList.remove('open');
+  }
+  function editNames() {
+    document.getElementById('previewModal').classList.remove('open');
+    document.getElementById('nameModal').classList.add('open');
+    setTimeout(function() { document.getElementById('guest1').focus(); }, 120);
+  }
+  function addAnother() {
+    document.getElementById('previewModal').classList.remove('open');
+    document.getElementById('guest1').value = '';
+    document.getElementById('nameModal').classList.add('open');
+    setTimeout(function() { document.getElementById('guest1').focus(); }, 120);
+  }
+  document.getElementById('guest1').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') generateInvitation();
+    if (e.key === 'Escape') closeNameModal();
+  });
+  document.getElementById('nameModal').addEventListener('click', function(e) { if (e.target === this) closeNameModal(); });
+  document.getElementById('previewModal').addEventListener('click', function(e) { if (e.target === this) closePreview(); });
+</script>
+</body>
+</html>
